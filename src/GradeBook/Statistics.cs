@@ -7,12 +7,14 @@ namespace GradeBook
         public double Average;
         public double High;
         public double Low;
+        public char Letter;
 
         public void ShowStatistics()
         {
             Console.WriteLine($"The average grade is {Average:N1}");
             Console.WriteLine($"The highest grade is {High}");
             Console.WriteLine($"The lowest grade is {Low}");
+            Console.WriteLine($"The letter grade is {Letter}");
         }
 
     }
