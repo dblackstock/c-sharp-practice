@@ -11,7 +11,7 @@ namespace GradeBook.Tests
         public void AddsNewGrade()
         {
             //arrange
-            var testBook = new GradeBook.Book("test name");
+            var testBook = new GradeBook.InMemoryBook("test name");
 
             //act
             testBook.AddGrade(8);
@@ -27,7 +27,7 @@ namespace GradeBook.Tests
         public void AveragesGrades(double val1, double val2, double val3, double expectedAverage)
         {
             //arrange
-            var testBook = new GradeBook.Book(new List<double>() { val1, val2, val3 });
+            var testBook = new GradeBook.InMemoryBook("name", new List<double>() { val1, val2, val3 });
 
             //act
             var result = testBook.GradeAverage();
@@ -42,7 +42,7 @@ namespace GradeBook.Tests
         [InlineData(45.3, 93.1, 84.2, 93.1)]
         public void FindsHighestGrade(double val1, double val2, double val3, double expectedHigh)
         {
-            var testBook = new GradeBook.Book(new List<double>() { val1, val2, val3 });
+            var testBook = new GradeBook.InMemoryBook("name", new List<double>() { val1, val2, val3 });
             var result = testBook.HighestGrade();
             Assert.Equal(expectedHigh, result);
         }
@@ -58,7 +58,7 @@ namespace GradeBook.Tests
         [InlineData(59, 'F')]
         public void CalculatesStatistics(double grade, char letter)
         {
-            var testBook = new GradeBook.Book("name");
+            var testBook = new GradeBook.InMemoryBook("name");
             testBook.AddGrade(grade);
             var result = testBook.GetStatistics();
 

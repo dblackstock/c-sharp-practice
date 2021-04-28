@@ -17,5 +17,12 @@ namespace GradeBook
             Console.WriteLine($"The letter grade is {Letter}");
         }
 
+        // create a constructor to initialise the fields
+        // create a method to pass a new grade to the class, at which point it:
+        // - replaces High or Low with it if needed
+        // - adds it to a Total field
+        // - increments a NumberOfGrades field by 1
+        // Within ShowStatistics, include the logic to calculate the average and the letter grade
+
     }
 }

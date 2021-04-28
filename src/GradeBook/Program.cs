@@ -7,8 +7,18 @@ namespace GradeBook
     {
         static void Main(string[] args)
         {
-            Book book = new Book("Grade book for Davey");
+            Book book = new DiskBook("Grade book for Davey");
+            book.GradeAdded += OnGradeAdded; // subscribing to the event
 
+
+            EnterGrades(book);
+
+            var result = book.GetStatistics();
+            result.ShowStatistics();
+        }
+
+        private static void EnterGrades(Book book)
+        {
             var done = false;
             do
             {
@@ -31,7 +41,7 @@ namespace GradeBook
                 {
                     try
                     {
-                        book.AddGrade(letterInput);
+                        book.AddGrade(input);
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
@@ -48,10 +58,11 @@ namespace GradeBook
                     Console.WriteLine("Invalid code, please try again.");
                 }
             } while (!done);
+        }
 
-
-            var result = book.GetStatistics();
-            result.ShowStatistics();
+        static void OnGradeAdded(object sender, EventArgs e)
+        {
+            Console.WriteLine("Grade was added.");
         }
     }
 

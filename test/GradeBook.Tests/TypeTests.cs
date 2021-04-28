@@ -3,8 +3,37 @@ using Xunit;
 
 namespace GradeBook.Tests
 {
+
+    public delegate string WriteLogDelegate(string logMessage);
     public class TypeTests
     {
+
+        int count = 0;
+
+        [Fact]
+        public void WriteLogDelegateCanPointToMethod()
+        {
+            WriteLogDelegate log = ReturnMessage;
+            log += ReturnMessage; //when you invoke log, invoke ReturnMessage
+            log += IncrementCount;
+            var result = log("Hello!");
+
+            Assert.Equal(2, count);
+        }
+
+        string IncrementCount(string message)
+        {
+            count++;
+            return message.ToLower();
+        }
+
+
+        string ReturnMessage(string message)
+        {
+            count++;
+            return message;
+        }
+
         [Fact]
         public void NewBooksAreIndependent()
         {
@@ -69,21 +98,21 @@ namespace GradeBook.Tests
             input = input.ToUpper();
         }
 
-        private Book GetBook(string name)
+        private InMemoryBook GetBook(string name)
         {
-            return new Book(name);
+            return new InMemoryBook(name);
         }
 
-        private void GetBookSetName(Book book, string name)
+        private void GetBookSetName(InMemoryBook book, string name)
         {
-            book = new Book(name);
+            book = new InMemoryBook(name);
             book.Name = name;
         }
 
 
-        private void GetBookSetNameRef(ref Book book, string name)
+        private void GetBookSetNameRef(ref InMemoryBook book, string name)
         {
-            book = new Book(name);
+            book = new InMemoryBook(name);
             book.Name = name;
         }
 

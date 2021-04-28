@@ -3,27 +3,43 @@ using System;
 
 namespace GradeBook
 {
-    public class Book
+
+    public interface IBook
+    {
+        void AddGrade(double grade);
+        Statistics GetStatistics();
+        string Name { get; }
+        event GradeAddedDelegate GradeAdded;
+    }
+
+    public abstract class Book : NamedObject, IBook
+    {
+        protected Book(string name) : base(name)
+        {
+        }
+
+        public abstract event GradeAddedDelegate GradeAdded;
+
+        public abstract void AddGrade(double grade); // every class that inherits from this must have an AddGrade method of this signature
+        public abstract void AddGrade(string grade);
+
+        public abstract Statistics GetStatistics();
+    }
+
+    public class InMemoryBook : Book
     {
 
-        private string name;
         private List<double> grades;
         // public List<double> grades = new List<double>();
-        public Book(string name)
+        public InMemoryBook(string name) : base(name)
         {
             grades = new List<double>();
             Name = name;
         }
 
-        public Book(List<double> grades)
+        public InMemoryBook(string name, List<double> grades) : base(name)
         {
             this.grades = grades;
-        }
-
-        public string Name
-        {
-            get => name;
-            set => name = value;
         }
 
         public List<double> Grades
@@ -32,11 +48,15 @@ namespace GradeBook
             set => grades = value;
         }
 
-        public void AddGrade(double grade)
+        public override void AddGrade(double grade)
         {
             if (grade <= 100 && grade >= 0)
             {
                 grades.Add(grade);
+                if (GradeAdded != null)
+                {
+                    GradeAdded(this, new EventArgs());
+                }
             }
             else
             {
@@ -44,23 +64,23 @@ namespace GradeBook
             }
         }
 
-        public void AddGrade(char letter)
+        public override void AddGrade(string letter)
         {
             switch (letter)
             {
-                case 'A':
+                case "A":
                     AddGrade(90);
                     break;
-                case 'B':
+                case "B":
                     AddGrade(80);
                     break;
-                case 'C':
+                case "C":
                     AddGrade(70);
                     break;
-                case 'D':
+                case "D":
                     AddGrade(60);
                     break;
-                case 'F':
+                case "F":
                     AddGrade(0);
                     break;
                 default:
@@ -97,7 +117,9 @@ namespace GradeBook
             return lowestGrade;
         }
 
-        public Statistics GetStatistics()
+        public override event GradeAddedDelegate GradeAdded;
+
+        public override Statistics GetStatistics()
         {
             var result = new Statistics();
             result.Average = GradeAverage();
