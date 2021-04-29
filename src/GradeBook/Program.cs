@@ -10,14 +10,15 @@ namespace GradeBook
             Book book = new DiskBook("Grade book for Davey");
             book.GradeAdded += OnGradeAdded; // subscribing to the event
 
+            var statistics = new Statistics();
+            var existingGrades = book.ReadExistingGrades();
+            statistics.AddGradeArrayToStatistics(existingGrades);
+            EnterGrades(book, statistics);
 
-            EnterGrades(book);
-
-            var result = book.GetStatistics();
-            result.ShowStatistics();
+            statistics.ShowStatistics();
         }
 
-        private static void EnterGrades(Book book)
+        private static void EnterGrades(Book book, Statistics statistics)
         {
             var done = false;
             do
@@ -31,6 +32,7 @@ namespace GradeBook
                     try
                     {
                         book.AddGrade(numberInput);
+                        statistics.AddGradeToStatistics(numberInput);
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
@@ -42,6 +44,8 @@ namespace GradeBook
                     try
                     {
                         book.AddGrade(input);
+                        var numberGrade = Statistics.LetterNumberGradeConvert(input);
+                        statistics.AddGradeToStatistics(numberGrade);
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
@@ -63,8 +67,8 @@ namespace GradeBook
         static void OnGradeAdded(object sender, EventArgs e)
         {
             Console.WriteLine("Grade was added.");
+
         }
     }
-
 
 }

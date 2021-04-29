@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using System.Text.RegularExpressions;
 
 namespace GradeBook
 {
@@ -7,7 +8,8 @@ namespace GradeBook
     public interface IBook
     {
         void AddGrade(double grade);
-        Statistics GetStatistics();
+        string[] ReadExistingGrades();
+        // Statistics GetStatistics();
         string Name { get; }
         event GradeAddedDelegate GradeAdded;
     }
@@ -23,14 +25,21 @@ namespace GradeBook
         public abstract void AddGrade(double grade); // every class that inherits from this must have an AddGrade method of this signature
         public abstract void AddGrade(string grade);
 
-        public abstract Statistics GetStatistics();
+        public static bool IsGradeValid(string grade)
+        {
+            Regex gradeRegex = new Regex(@"^[ABCDF]$");
+            var match = gradeRegex.Match(grade);
+            return match.Success;
+        }
+        public abstract string[] ReadExistingGrades();
+
+        // public abstract Statistics GetStatistics();
     }
 
     public class InMemoryBook : Book
     {
 
         private List<double> grades;
-        // public List<double> grades = new List<double>();
         public InMemoryBook(string name) : base(name)
         {
             grades = new List<double>();
@@ -64,88 +73,21 @@ namespace GradeBook
             }
         }
 
-        public override void AddGrade(string letter)
+        public override void AddGrade(string grade)
         {
-            switch (letter)
+            if (IsGradeValid(grade))
             {
-                case "A":
-                    AddGrade(90);
-                    break;
-                case "B":
-                    AddGrade(80);
-                    break;
-                case "C":
-                    AddGrade(70);
-                    break;
-                case "D":
-                    AddGrade(60);
-                    break;
-                case "F":
-                    AddGrade(0);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("Valid grades are A,B,C,D,F.");
+                var numberGrade = Statistics.LetterNumberGradeConvert(grade);
+                AddGrade(numberGrade);
             }
-        }
-
-        public double GradeAverage()
-        {
-            double gradeAverage = 0;
-            foreach (double element in grades)
+            else
             {
-                gradeAverage += element;
+                throw new ArgumentOutOfRangeException("Valid grades are A,B,C,D,F.");
             }
-            return gradeAverage /= grades.Count;
-        }
-
-        public double HighestGrade()
-        {
-            double highestGrade = double.MinValue;
-            foreach (double element in grades)
-            {
-                highestGrade = Math.Max(element, highestGrade);
-            }
-            return highestGrade;
-        }
-        public double LowestGrade()
-        {
-            double lowestGrade = double.MaxValue;
-            foreach (double element in grades)
-            {
-                lowestGrade = Math.Min(element, lowestGrade);
-            }
-            return lowestGrade;
         }
 
         public override event GradeAddedDelegate GradeAdded;
-
-        public override Statistics GetStatistics()
-        {
-            var result = new Statistics();
-            result.Average = GradeAverage();
-            result.Low = LowestGrade();
-            result.High = HighestGrade();
-
-            switch (result.Average)
-            {
-                case var d when d >= 90.0:
-                    result.Letter = 'A';
-                    break;
-                case var d when d >= 80.0:
-                    result.Letter = 'B';
-                    break;
-                case var d when d >= 70.0:
-                    result.Letter = 'C';
-                    break;
-                case var d when d >= 60.0:
-                    result.Letter = 'D';
-                    break;
-                default:
-                    result.Letter = 'F';
-                    break;
-            }
-
-            return result;
-        }
+        public override string[] ReadExistingGrades() // In memory books have no capacity for reading in pre-existing grades
+        { return new string[0]; }
     }
 }

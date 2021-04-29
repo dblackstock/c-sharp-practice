@@ -1,15 +1,18 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace GradeBook
 {
     public class DiskBook : Book
     {
+        private string fileName;
         public DiskBook(string name) : base(name)
         {
             Name = name;
-            // some code to create or link to a file
+            fileName = $"./{Name}.txt";
         }
+
 
         public override event GradeAddedDelegate GradeAdded;
 
@@ -21,8 +24,6 @@ namespace GradeBook
 
         private void WriteGradeToFile(string grade)
         {
-            string fileName = $"./{Name}.txt";
-
             using (StreamWriter writer = new StreamWriter(fileName, true))
             {
                 writer.WriteLine($"{grade}");
@@ -35,12 +36,23 @@ namespace GradeBook
 
         public override void AddGrade(string grade)
         {
-            WriteGradeToFile(grade);
+            if (IsGradeValid(grade))
+            {
+                WriteGradeToFile(grade);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Valid grades are A,B,C,D,F.");
+            }
         }
 
-        public override Statistics GetStatistics()
+        public override string[] ReadExistingGrades()
         {
-            throw new NotImplementedException();
+            StreamWriter writer = new StreamWriter(fileName, true);
+            string[] grades = new string[0];
+            grades = File.ReadAllLines(fileName); 
+            return grades;
         }
+
     }
 }
