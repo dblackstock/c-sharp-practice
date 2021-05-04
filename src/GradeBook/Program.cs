@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GradeBook
 {
@@ -8,6 +7,7 @@ namespace GradeBook
         static void Main(string[] args)
         {
             Book book = new DiskBook("Grade book for Davey");
+            // Book book = new InMemoryBook("Grade book for Davey");
             book.GradeAdded += OnGradeAdded; // subscribing to the event
 
             var statistics = new Statistics();

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System;
 using System.Text.RegularExpressions;
 
 namespace GradeBook
@@ -9,7 +7,6 @@ namespace GradeBook
     {
         void AddGrade(double grade);
         string[] ReadExistingGrades();
-        // Statistics GetStatistics();
         string Name { get; }
         event GradeAddedDelegate GradeAdded;
     }
@@ -31,63 +28,18 @@ namespace GradeBook
             var match = gradeRegex.Match(grade);
             return match.Success;
         }
-        public abstract string[] ReadExistingGrades();
 
-        // public abstract Statistics GetStatistics();
-    }
-
-    public class InMemoryBook : Book
-    {
-
-        private List<double> grades;
-        public InMemoryBook(string name) : base(name)
-        {
-            grades = new List<double>();
-            Name = name;
-        }
-
-        public InMemoryBook(string name, List<double> grades) : base(name)
-        {
-            this.grades = grades;
-        }
-
-        public List<double> Grades
-        {
-            get => grades;
-            set => grades = value;
-        }
-
-        public override void AddGrade(double grade)
+        public static bool IsGradeValid(double grade)
         {
             if (grade <= 100 && grade >= 0)
             {
-                grades.Add(grade);
-                if (GradeAdded != null)
-                {
-                    GradeAdded(this, new EventArgs());
-                }
+                return true;
             }
             else
             {
-                throw new ArgumentOutOfRangeException($"{nameof(grade)} must be between 0 and 100");
+                return false;
             }
         }
-
-        public override void AddGrade(string grade)
-        {
-            if (IsGradeValid(grade))
-            {
-                var numberGrade = Statistics.LetterNumberGradeConvert(grade);
-                AddGrade(numberGrade);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("Valid grades are A,B,C,D,F.");
-            }
-        }
-
-        public override event GradeAddedDelegate GradeAdded;
-        public override string[] ReadExistingGrades() // In memory books have no capacity for reading in pre-existing grades
-        { return new string[0]; }
+        public abstract string[] ReadExistingGrades();
     }
 }

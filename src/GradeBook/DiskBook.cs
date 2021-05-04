@@ -18,8 +18,15 @@ namespace GradeBook
 
         public override void AddGrade(double grade)
         {
-            var stringGrade = Convert.ToString(grade);
-            WriteGradeToFile(stringGrade);
+            if (IsGradeValid(grade))
+            {
+                var stringGrade = Convert.ToString(grade);
+                WriteGradeToFile(stringGrade);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException($"{nameof(grade)} must be between 0 and 100");
+            }
         }
 
         private void WriteGradeToFile(string grade)
@@ -50,7 +57,7 @@ namespace GradeBook
         {
             StreamWriter writer = new StreamWriter(fileName, true);
             string[] grades = new string[0];
-            grades = File.ReadAllLines(fileName); 
+            grades = File.ReadAllLines(fileName);
             return grades;
         }
 
